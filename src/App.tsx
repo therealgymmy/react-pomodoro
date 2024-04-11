@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const {
     startTimer,
     stopTimer,
+    resetTimer, // Destructure the resetTimer function
     secondsLeft,
     mode,
     isActive,
@@ -43,23 +44,48 @@ const App: React.FC = () => {
       <Card
         variant="outlined"
         style={{
-          padding: "50px",
+          padding: "20px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           borderRadius: "30px",
         }}
       >
-        <Typography variant="h2" gutterBottom>
-          React Pomodoro
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={isActive ? stopTimer : startTimer}
+        <Card
+          variant="outlined"
+          style={{
+            padding: "10px",
+            margin: "10px",
+            marginBottom: "50px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderRadius: "30px",
+            backgroundColor: "#f4e1e1", // Added a nice shade of white
+            border: "4px solid #f9f8ee",
+          }}
         >
-          {isActive ? "Stop" : "Start"}
-        </Button>
+          <Typography variant="h3">React Pomodoro</Typography>
+        </Card>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "50%",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={isActive ? stopTimer : startTimer}
+          >
+            {isActive ? "Stop" : "Start"}
+          </Button>
+          <Button variant="contained" color="secondary" onClick={resetTimer}>
+            Reset
+          </Button>
+        </Box>
         <Box
           style={{
             display: "flex",
@@ -68,38 +94,58 @@ const App: React.FC = () => {
             margin: "20px",
           }}
         >
-          <CircularProgress
-            variant="determinate"
-            value={progress}
-            size={200}
+          <Box
             style={{
-              color: mode === "work" ? "#1976d2" : "#4caf50",
+              position: "relative",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "100px",
             }}
-          />
-          <Box style={{ display: "flex", flexDirection: "row" }}>
+          >
+            <CircularProgress
+              variant="determinate"
+              value={progress}
+              size={200}
+              style={{
+                color: mode === "work" ? "#1976d2" : "#4caf50",
+                position: "absolute",
+                zIndex: 2,
+              }}
+            />
+            <CircularProgress
+              variant="determinate"
+              value={100}
+              size={200}
+              style={{
+                color: "#ffffff",
+                position: "absolute",
+                zIndex: 1,
+              }}
+            />
             <Box
               style={{
-                margin: "10px",
+                position: "absolute",
+                borderRadius: "50%",
+                border: "24px solid #f9f8ee",
+                backgroundColor: "#f4e1e1",
+                width: "160px",
+                height: "160px",
+              }}
+            />
+            <Box
+              style={{
+                position: "absolute",
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
               }}
             >
               <Typography variant="h5" color="textSecondary">
                 {Math.floor(secondsLeft / 60)}:
                 {String(secondsLeft % 60).padStart(2, "0")}
-              </Typography>
-            </Box>
-            <Box
-              style={{
-                margin: "10px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Typography variant="subtitle1" color="textSecondary">
-                Mode: {mode.toUpperCase()}
               </Typography>
             </Box>
           </Box>

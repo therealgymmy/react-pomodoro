@@ -18,7 +18,6 @@ export const usePomodoroTimer = ({
   const [isActive, setIsActive] = useState(false);
   const [cyclesCompleted, setCyclesCompleted] = useState(0);
 
-  // Update timer settings and reset on changes
   useEffect(() => {
     setSecondsLeft(workDuration * 60);
     setCyclesCompleted(0);
@@ -52,14 +51,30 @@ export const usePomodoroTimer = ({
     }
 
     return () => clearInterval(interval!);
-  }, [isActive, mode, cyclesCompleted, secondsLeft]);
+  }, [
+    isActive,
+    mode,
+    cyclesCompleted,
+    secondsLeft,
+    repetitions,
+    restDuration,
+    workDuration,
+  ]);
 
   const startTimer = () => setIsActive(true);
   const stopTimer = () => setIsActive(false);
 
+  const resetTimer = () => {
+    setIsActive(false);
+    setSecondsLeft(workDuration * 60);
+    setCyclesCompleted(0);
+    setMode("work");
+  };
+
   return {
     startTimer,
     stopTimer,
+    resetTimer, // Expose the resetTimer function
     secondsLeft,
     mode,
     isActive,
