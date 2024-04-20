@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 
 type TimerMode = "work" | "rest";
-
 interface PomodoroTimerSettings {
-  workDuration: number; // in minutes
-  restDuration: number; // in minutes
+  workDuration: number; // in seconds
+  restDuration: number; // in seconds
   repetitions: number;
 }
 
@@ -14,14 +13,16 @@ export const usePomodoroTimer = ({
   repetitions,
 }: PomodoroTimerSettings) => {
   const [mode, setMode] = useState<TimerMode>("work");
-  const [secondsLeft, setSecondsLeft] = useState(workDuration * 60);
+  const [secondsLeft, setSecondsLeft] = useState(workDuration);
   const [isActive, setIsActive] = useState(false);
   const [cyclesCompleted, setCyclesCompleted] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false); // New state to track completion
 
   useEffect(() => {
-    setSecondsLeft(workDuration * 60);
+    setSecondsLeft(workDuration);
     setCyclesCompleted(0);
     setMode("work");
+    setIsCompleted(false); // Reset completion state when settings change
   }, [workDuration, restDuration, repetitions]);
 
   useEffect(() => {
@@ -34,19 +35,22 @@ export const usePomodoroTimer = ({
 
           if (mode === "work") {
             setMode("rest");
-            return restDuration * 60;
+            return restDuration;
           } else {
-            setMode("work");
-            setCyclesCompleted((cycles) => cycles + 1);
-            return workDuration * 60;
+            if (cyclesCompleted + 1 < repetitions) {
+              setMode("work");
+              setCyclesCompleted((cycles) => cycles + 1);
+              return workDuration;
+            } else {
+              // Mark as completed without resetting immediately
+              setIsActive(false);
+              setIsCompleted(true);
+              return 0; // Stop the timer
+            }
           }
         });
       }, 1000);
-    } else if (
-      !isActive &&
-      secondsLeft !== 0 &&
-      cyclesCompleted < repetitions
-    ) {
+    } else if (!isActive) {
       clearInterval(interval!);
     }
 
@@ -55,29 +59,37 @@ export const usePomodoroTimer = ({
     isActive,
     mode,
     cyclesCompleted,
-    secondsLeft,
     repetitions,
     restDuration,
     workDuration,
   ]);
 
-  const startTimer = () => setIsActive(true);
+  const startTimer = () => {
+    if (isCompleted) {
+      // Reset the timer before starting again if it was completed
+      resetTimer();
+    }
+    setIsActive(true);
+  };
+
   const stopTimer = () => setIsActive(false);
 
   const resetTimer = () => {
     setIsActive(false);
-    setSecondsLeft(workDuration * 60);
+    setSecondsLeft(workDuration);
     setCyclesCompleted(0);
     setMode("work");
+    setIsCompleted(false); // Also reset the completion state
   };
 
   return {
     startTimer,
     stopTimer,
-    resetTimer, // Expose the resetTimer function
+    resetTimer,
     secondsLeft,
     mode,
     isActive,
     cyclesCompleted,
+    isCompleted, // Expose the new state to indicate completion
   };
 };

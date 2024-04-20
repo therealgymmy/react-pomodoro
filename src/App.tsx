@@ -10,14 +10,14 @@ import {
 import { usePomodoroTimer } from "./usePomodoroTimer";
 
 const App: React.FC = () => {
-  const [workDuration, setWorkDuration] = useState(15);
-  const [restDuration, setRestDuration] = useState(5);
+  const [workDuration, setWorkDuration] = useState(60);
+  const [restDuration, setRestDuration] = useState(60);
   const [repetitions, setRepetitions] = useState(3);
 
   const {
     startTimer,
     stopTimer,
-    resetTimer, // Destructure the resetTimer function
+    resetTimer,
     secondsLeft,
     mode,
     isActive,
@@ -26,8 +26,8 @@ const App: React.FC = () => {
 
   const progress =
     mode === "work"
-      ? ((workDuration * 60 - secondsLeft) / (workDuration * 60)) * 100
-      : ((restDuration * 60 - secondsLeft) / (restDuration * 60)) * 100;
+      ? ((workDuration - secondsLeft) / workDuration) * 100
+      : ((restDuration - secondsLeft) / restDuration) * 100;
 
   return (
     <Box
@@ -49,6 +49,7 @@ const App: React.FC = () => {
           flexDirection: "column",
           alignItems: "center",
           borderRadius: "30px",
+          // width: "80%",
         }}
       >
         <Card
@@ -61,7 +62,7 @@ const App: React.FC = () => {
             flexDirection: "column",
             alignItems: "center",
             borderRadius: "30px",
-            backgroundColor: "#f4e1e1", // Added a nice shade of white
+            backgroundColor: "#f4e1e1",
             border: "4px solid #f9f8ee",
           }}
         >
@@ -156,44 +157,68 @@ const App: React.FC = () => {
         <Box
           style={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Typography variant="subtitle1">Work Duration (minutes):</Typography>
-          <TextField
-            type="number"
-            value={workDuration}
-            onChange={(e) => setWorkDuration(parseInt(e.target.value))}
-          />
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="subtitle1">Rest Duration (minutes):</Typography>
-          <TextField
-            type="number"
-            value={restDuration}
-            onChange={(e) => setRestDuration(parseInt(e.target.value))}
-          />
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="subtitle1">Repetitions:</Typography>
-          <TextField
-            type="number"
-            value={repetitions}
-            onChange={(e) => setRepetitions(parseInt(e.target.value))}
-          />
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "10px",
+            }}
+          >
+            <Typography variant="subtitle1" margin="10px">
+              Work
+            </Typography>
+            <TextField
+              type="number"
+              value={workDuration}
+              onChange={(e) => setWorkDuration(parseInt(e.target.value))}
+              style={{ width: "80px" }}
+            />
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "10px",
+            }}
+          >
+            <Typography variant="subtitle1" margin="10px">
+              Rest
+            </Typography>
+            <TextField
+              type="number"
+              value={restDuration}
+              onChange={(e) => setRestDuration(parseInt(e.target.value))}
+              style={{ width: "80px" }}
+            />
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "10px",
+            }}
+          >
+            <Typography variant="subtitle1" margin="10px">
+              Reps
+            </Typography>
+            <TextField
+              type="number"
+              value={repetitions}
+              onChange={(e) => setRepetitions(parseInt(e.target.value))}
+              style={{ width: "80px" }}
+            />
+          </Box>
         </Box>
       </Card>
     </Box>
