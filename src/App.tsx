@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Button,
@@ -8,6 +8,8 @@ import {
   Card,
 } from "@mui/material";
 import { usePomodoroTimer } from "./usePomodoroTimer";
+import workEndSoundUri from "./assets/work_complete_chime.mp3";
+import restEndSoundUri from "./assets/rest_complete_chime.mp3";
 
 const App: React.FC = () => {
   const [workDuration, setWorkDuration] = useState(60);
@@ -28,6 +30,17 @@ const App: React.FC = () => {
     mode === "work"
       ? ((workDuration - secondsLeft) / workDuration) * 100
       : ((restDuration - secondsLeft) / restDuration) * 100;
+
+  // Sound effect logic
+  useEffect(() => {
+    if (secondsLeft === 0) {
+      const sound =
+        mode === "work"
+          ? new Audio(workEndSoundUri)
+          : new Audio(restEndSoundUri);
+      sound.play();
+    }
+  }, [secondsLeft, mode]);
 
   return (
     <Box
